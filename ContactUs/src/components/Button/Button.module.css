@@ -1,0 +1,38 @@
+.primary_btn{
+    display: flex;
+    padding: 18px 10px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin: 5px;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-size: clamp(14px, 1.5vw, 16px);
+}
+
+.secondary_btn{
+    display: flex;
+    padding: 18px 10px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin: 5px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    font-size: clamp(14px, 1.5vw, 16px);
+}
+
+@media (max-width: 480px) {
+    .primary_btn,
+    .secondary_btn {
+        padding: 12px 8px;
+    }
+}
