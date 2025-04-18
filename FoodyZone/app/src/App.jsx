@@ -4,22 +4,33 @@ import styled from 'styled-components'
 const App = () => {
   const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedFilter, setSelectedFilter] = useState("All");
 
-  useEffect(() => {
-    const fetchFoodData = async () => {
-      try {
-        const response = await fetch('http://localhost:9000/');
-        const data = await response.json();
+  useEffect(()=>{
+    const fetchFoodData= async ()=>{
+      try{
+        const response= await fetch('http://localhost:9000/');
+        const data=await response.json();
+        console.log(data)
         setFoods(data);
         setLoading(false);
-      } catch (error) {
-        console.error("Error fetching food data:", error);
+      }catch(error){
+        console.error("Error fetching food data", error);
         setLoading(false);
       }
     };
 
     fetchFoodData();
   }, []);
+
+  const filterFood = (type) => {
+    setSelectedFilter(type);
+  };
+
+  const filteredFoods = foods.filter((food) => {
+    if (selectedFilter === "All") return true;
+    return food.type.toLowerCase() === selectedFilter.toLowerCase();
+  });
 
   return (
     <>
@@ -33,10 +44,30 @@ const App = () => {
           </div>
         </TopContainer>
         <FilterContainer>
-          <Button>All</Button>
-          <Button>Breakfast</Button>
-          <Button>Lunch</Button>
-          <Button>Dinner</Button>
+          <Button 
+            isSelected={selectedFilter === "All"}
+            onClick={() => filterFood("All")}
+          >
+            All
+          </Button>
+          <Button 
+            isSelected={selectedFilter === "breakfast"}
+            onClick={() => filterFood("breakfast")}
+          >
+            Breakfast
+          </Button>
+          <Button 
+            isSelected={selectedFilter === "lunch"}
+            onClick={() => filterFood("lunch")}
+          >
+            Lunch
+          </Button>
+          <Button 
+            isSelected={selectedFilter === "dinner"}
+            onClick={() => filterFood("dinner")}
+          >
+            Dinner
+          </Button>
         </FilterContainer>
 
         <FoodContainer>
@@ -44,7 +75,7 @@ const App = () => {
             {loading ? (
               <p>Loading...</p>
             ) : (
-              foods.map((food) => (
+              filteredFoods.map((food) => (
                 <FoodCard key={food.name}>
                   <div className="food_image">
                     <img src={`http://localhost:9000${food.image}`} alt={food.name} />
@@ -134,7 +165,7 @@ const FilterContainer=styled.section`
 `
 
 const Button=styled.button`
-  background-color: #FF4343;
+  background-color: ${({ isSelected }) => (isSelected ? "#db2c2c" : "#FF4343")};
   border-radius: 5px;
   padding: 6px 12px;
   border: none;
