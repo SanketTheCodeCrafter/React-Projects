@@ -2,30 +2,68 @@ import React from 'react'
 import Modal from './Modal'
 import { Formik, Field, Form as FormikForm } from 'formik'
 import styled from 'styled-components'
+import { addDoc, collection, updateDoc, doc } from 'firebase/firestore'
+import { db } from '../config/firebase'
+import { toast } from 'react-toastify';
 
-const AddAndUpdateContact = ({ isOpen, onClose }) => {
+
+const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
+
+    const addContact = async (values) => {
+        try {
+            const contactsRef = collection(db, "contact");
+            await addDoc(contactsRef, values);
+            onClose();
+            toast.success("Contact added successfully!");
+
+            console.log("Contact added successfully!");
+        } catch (error) {
+            console.error("Error adding contact: ", error);
+        }
+    }
+    const updateContact = async (values, id) => {
+        try {
+            const docRef = doc(db, "contact", id);
+            await updateDoc(docRef, values);
+            onClose();
+            toast.success("Contact updated successfully!");
+
+            console.log("Contact updated successfully!");
+        } catch (error) {
+            console.error("Error updating contact: ", error);
+        }
+    }
     return (
         <div>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <FormContainer>
                     <Formik
-                        initialValues={{name: '', email: ''}}
+                        initialValues={
+                            isUpdate && contact
+                                ? { name: contact.name, email: contact.email }
+                                : { name: '', email: '' }
+                        }
+                        enableReinitialize={true}
                         onSubmit={(values) => {
                             console.log(values)
+                            isUpdate ?
+                                updateContact(values, contact.id) :
+                                addContact(values);
+                            onClose(); // Close the modal after submission
                         }}
                     >
                         <FormikForm>
                             <FormField>
                                 <Label htmlFor="name">Name</Label>
-                                <StyledField name='name' placeholder="Enter name"/>
+                                <StyledField name='name' placeholder="Enter name" />
                             </FormField>
                             <FormField>
                                 <Label htmlFor="email">Email</Label>
-                                <StyledField type='email' name='email' placeholder="Enter email"/>
+                                <StyledField type='email' name='email' placeholder="Enter email" />
                             </FormField>
                             <ButtonContainer>
                                 <SubmitButton type="submit">
-                                    Add Contact
+                                    {isUpdate ? "Update" : "Add"} Contact
                                 </SubmitButton>
                             </ButtonContainer>
                         </FormikForm>

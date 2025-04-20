@@ -1,10 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { HiOutlineUserCircle } from "react-icons/hi";
 import { IoMdTrash } from "react-icons/io";
 import { RiEditCircleLine } from "react-icons/ri";
+import { deleteDoc, doc } from 'firebase/firestore'
+import { db } from "../config/firebase";
+import useDisclosure from '../hooks/useDisclosure'
+import AddAndUpdateContact from './AddAndUpdateContact';
+import { toast } from 'react-toastify';
 
 const ContactCard = ({ contacts }) => {
+    const [selectedContact, setSelectedContact] = useState(null);
+    const { isOpen, onClose, onOpen } = useDisclosure();
+
+    const deleteContact = async (id) => {
+        try {
+            await deleteDoc(doc(db, "contact", id));
+            toast.success("Contact deleted successfully!");
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <div>
             {contacts.map((contact) => (
@@ -19,11 +36,25 @@ const ContactCard = ({ contacts }) => {
                         </ContactDetails>
                     </ContactInfo>
                     <ActionButtons>
-                        <RiEditCircleLine size={20} color="#4A90E2" cursor="pointer" />
-                        <IoMdTrash size={20} color="#f44336" cursor="pointer" />
+                        <RiEditCircleLine 
+                            onClick={() => {
+                                setSelectedContact(contact);
+                                onOpen();
+                            }} 
+                            size={20} 
+                            color="#4A90E2" 
+                            cursor="pointer" 
+                        />
+                        <IoMdTrash onClick={() => deleteContact(contact.id)} size={20} color="#f44336" cursor="pointer" />
                     </ActionButtons>
                 </CardContainer>
             ))}
+            <AddAndUpdateContact 
+                isUpdate={true} 
+                isOpen={isOpen} 
+                onClose={onClose} 
+                contact={selectedContact}
+            />
         </div>
     )
 }

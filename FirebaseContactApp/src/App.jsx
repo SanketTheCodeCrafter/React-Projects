@@ -4,38 +4,37 @@ import './App.css'
 import Search from './components/search'
 import { useState, useEffect } from 'react'
 import {db} from './config/firebase'
-import {collection, getDocs} from 'firebase/firestore'
+import {collection, getDocs, onSnapshot} from 'firebase/firestore'
 import ContactCard from './components/ContactCard'
-import Modal from './components/Modal'
 import AddAndUpdateContact from './components/AddAndUpdateContact'
+import useDisclosure from './hooks/useDisclosure'
+import { ToastContainer, toast } from 'react-toastify';
+
 
 const App = () => {
 
   const [contacts, setContacts]=useState([]);
-  const [isOpen, setIsOpen]=useState(false);
-
-  const onOpen=()=>{
-    setIsOpen(true);
-  }
-
-  const onClose=()=>{
-    setIsOpen(false);
-  }
+  const {isOpen, onClose, onOpen}=useDisclosure();
 
   useEffect(()=>{
     const getContacts=async ()=>{
       try{
         const contactsRef=collection(db, "contact");
         const contactSnapshot=await getDocs(contactsRef);
-        console.log(contactSnapshot);
-        const contactList=contactSnapshot.docs.map((doc)=>{
-          return {
-            id: doc.id,
-            ...doc.data()
-          }
+
+        onSnapshot(contactsRef, (snapshot)=>{
+          console.log(contactSnapshot);
+          const contactList=snapshot.docs.map((doc)=>{
+            return {
+              id: doc.id,
+              ...doc.data()
+            }
+          })
+          setContacts(contactList);
+          console.log(contactList); 
+          return contactList;
         })
-        setContacts(contactList);
-        console.log(contactList); 
+
       }catch(error){
         console.log(error);
       }
@@ -43,15 +42,47 @@ const App = () => {
 
     getContacts();
   }, [])
+
+  const filteredContacts=(e)=>{
+    const value=e.target.value;
+
+    const contactsRef=collection(db, "contact");
+
+    onSnapshot(contactsRef, (snapshot)=>{
+      // console.log(contactSnapshot);
+      const contactList=snapshot.docs.map((doc)=>{
+        return {
+          id: doc.id,
+          ...doc.data()
+        }
+      })
+
+      const filteredContact=contactList.filter((contact)=>{
+        contact.name.toLowerCase().includes(value.toLowerCase()) || contact.email.toLowerCase().includes(value.toLowerCase())
+      })
+      setContacts(filteredContact);
+      // console.log(contactList); 
+      return filteredContacts;
+    })
+  }
   return (
     <div>
       <Nav />
-      <Search onOpen={onOpen}/>
+      <Search onOpen={onOpen} />
       <ContactCard contacts={contacts}/>
-      <Modal isOpen={isOpen} onClose={onClose} >
-        Hello!
-      </Modal>
       <AddAndUpdateContact isOpen={isOpen} onClose={onClose} />
+      <ToastContainer 
+        position="bottom-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"      
+      />
     </div>
 
   )

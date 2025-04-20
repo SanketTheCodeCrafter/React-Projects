@@ -9,7 +9,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyATXz8AoXf5CEir-zrAfN29rafFduOJkuo",
   authDomain: "contact-app-dd8c2.firebaseapp.com",
   projectId: "contact-app-dd8c2",
-  storageBucket: "contact-app-dd8c2.firebasestorage.app",
+  storageBucket: "contact-app-dd8c2.appspot.com", // Fix: correct storage bucket URL
   messagingSenderId: "458563584304",
   appId: "1:458563584304:web:9375ae95482685e230c8f5"
 };
