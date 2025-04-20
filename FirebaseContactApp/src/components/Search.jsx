@@ -5,13 +5,13 @@ import { AiFillPlusCircle } from "react-icons/ai";
 
 
 
-const Search = () => {
+const Search = ({onOpen}) => {
 return (
     <SearchStyle>
     <div>
             <FiSearch style={{color: 'white', fontSize: '30px'}}/>
             <input type="text" placeholder='Search' />
-            <AiFillPlusCircle style={{color: 'white', fontSize: '50px', marginLeft: '400px'}}/>
+            <AiFillPlusCircle onClick={onOpen}style={{color: 'white', fontSize: '50px', marginLeft: '400px'}}/>
     </div>
     </SearchStyle>)
 }
