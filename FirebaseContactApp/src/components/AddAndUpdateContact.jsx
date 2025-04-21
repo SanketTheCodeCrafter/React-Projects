@@ -1,11 +1,16 @@
 import React from 'react'
 import Modal from './Modal'
-import { Formik, Field, Form as FormikForm } from 'formik'
+import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik'
 import styled from 'styled-components'
 import { addDoc, collection, updateDoc, doc } from 'firebase/firestore'
 import { db } from '../config/firebase'
 import { toast } from 'react-toastify';
+import * as Yup from "yup";
 
+const contactSchemaValidation = Yup.object().shape({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+})
 
 const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
 
@@ -14,9 +19,24 @@ const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
             const contactsRef = collection(db, "contact");
             await addDoc(contactsRef, values);
             onClose();
-            toast.success("Contact added successfully!");
-
-            console.log("Contact added successfully!");
+            toast.success("Contact added successfully!", {
+                position: "bottom-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                style: {
+                    backgroundColor: "#4BB543",
+                    color: "white",
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                    fontSize: "16px",
+                    padding: "12px 24px"
+                },
+                icon: "🎉"
+            });
         } catch (error) {
             console.error("Error adding contact: ", error);
         }
@@ -26,9 +46,21 @@ const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
             const docRef = doc(db, "contact", id);
             await updateDoc(docRef, values);
             onClose();
-            toast.success("Contact updated successfully!");
-
-            console.log("Contact updated successfully!");
+            toast.success("Contact updated successfully!", {
+                position: "bottom-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                style: {
+                    backgroundColor: "#4BB543",
+                    color: "white",
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+                }
+            });
         } catch (error) {
             console.error("Error updating contact: ", error);
         }
@@ -38,6 +70,7 @@ const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
             <Modal isOpen={isOpen} onClose={onClose}>
                 <FormContainer>
                     <Formik
+                        validationSchema={contactSchemaValidation}
                         initialValues={
                             isUpdate && contact
                                 ? { name: contact.name, email: contact.email }
@@ -56,10 +89,16 @@ const AddAndUpdateContact = ({ isOpen, onClose, isUpdate, contact }) => {
                             <FormField>
                                 <Label htmlFor="name">Name</Label>
                                 <StyledField name='name' placeholder="Enter name" />
+                                <StyledErrorMessage>
+                                    <ErrorMessage name="name" />
+                                </StyledErrorMessage>
                             </FormField>
                             <FormField>
                                 <Label htmlFor="email">Email</Label>
                                 <StyledField type='email' name='email' placeholder="Enter email" />
+                                <StyledErrorMessage>
+                                    <ErrorMessage name="email" />
+                                </StyledErrorMessage>
                             </FormField>
                             <ButtonContainer>
                                 <SubmitButton type="submit">
@@ -105,10 +144,21 @@ const StyledField = styled(Field)`
     font-size: 1rem;
     width: 100%;
     
+    ${props => props.form?.errors[props.field.name] && props.form?.touched[props.field.name] && `
+        border-color: #e74c3c;
+        background-color: #fdf3f2;
+    `}
+
     &:focus {
         outline: none;
-        border-color: #f4c430;
-        box-shadow: 0 0 0 2px rgba(244, 196, 48, 0.2);
+        border-color: ${props => 
+            props.form?.errors[props.field.name] && props.form?.touched[props.field.name] 
+            ? '#e74c3c' 
+            : '#f4c430'};
+        box-shadow: 0 0 0 2px ${props => 
+            props.form?.errors[props.field.name] && props.form?.touched[props.field.name]
+            ? 'rgba(231, 76, 60, 0.2)'
+            : 'rgba(244, 196, 48, 0.2)'};
     }
 `
 
@@ -136,5 +186,32 @@ const SubmitButton = styled.button`
 
     &:active {
         transform: translateY(0);
+    }
+`
+
+const StyledErrorMessage = styled.div`
+    color: #e74c3c;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: slideIn 0.3s ease-in-out;
+
+    &::before {
+        /* content: "⚠️"; */
+        font-size: 1rem;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 `

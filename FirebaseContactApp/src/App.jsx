@@ -9,11 +9,13 @@ import ContactCard from './components/ContactCard'
 import AddAndUpdateContact from './components/AddAndUpdateContact'
 import useDisclosure from './hooks/useDisclosure'
 import { ToastContainer, toast } from 'react-toastify';
+import NoContact from './components/NoContact'
 
 
 const App = () => {
 
   const [contacts, setContacts]=useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // Add search term state
   const {isOpen, onClose, onOpen}=useDisclosure();
 
   useEffect(()=>{
@@ -43,33 +45,22 @@ const App = () => {
     getContacts();
   }, [])
 
-  const filteredContacts=(e)=>{
-    const value=e.target.value;
+  // Filter contacts based on search term
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-    const contactsRef=collection(db, "contact");
-
-    onSnapshot(contactsRef, (snapshot)=>{
-      // console.log(contactSnapshot);
-      const contactList=snapshot.docs.map((doc)=>{
-        return {
-          id: doc.id,
-          ...doc.data()
-        }
-      })
-
-      const filteredContact=contactList.filter((contact)=>{
-        contact.name.toLowerCase().includes(value.toLowerCase()) || contact.email.toLowerCase().includes(value.toLowerCase())
-      })
-      setContacts(filteredContact);
-      // console.log(contactList); 
-      return filteredContacts;
-    })
-  }
   return (
     <div>
       <Nav />
-      <Search onOpen={onOpen} />
-      <ContactCard contacts={contacts}/>
+      <Search onOpen={onOpen} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      {filteredContacts.length === 0 ? (
+        <NoContact />
+      ) : (
+        <ContactCard contacts={filteredContacts} />
+      )}
       <AddAndUpdateContact isOpen={isOpen} onClose={onClose} />
       <ToastContainer 
         position="bottom-center"

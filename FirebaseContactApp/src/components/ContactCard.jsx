@@ -16,7 +16,20 @@ const ContactCard = ({ contacts }) => {
     const deleteContact = async (id) => {
         try {
             await deleteDoc(doc(db, "contact", id));
-            toast.success("Contact deleted successfully!");
+            toast.success("Contact deleted successfully!", {
+                position: "bottom-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                style: {
+                    backgroundColor: "#4a4a4a",
+                    color: "#fff"
+                }
+            });
         } catch (error) {
             console.log(error)
         }
@@ -36,16 +49,19 @@ const ContactCard = ({ contacts }) => {
                         </ContactDetails>
                     </ContactInfo>
                     <ActionButtons>
-                        <RiEditCircleLine 
+                        <EditButton 
                             onClick={() => {
                                 setSelectedContact(contact);
                                 onOpen();
-                            }} 
-                            size={20} 
-                            color="#4A90E2" 
-                            cursor="pointer" 
-                        />
-                        <IoMdTrash onClick={() => deleteContact(contact.id)} size={20} color="#f44336" cursor="pointer" />
+                            }}
+                        >
+                            <RiEditCircleLine size={25} />
+                            <span>Edit</span>
+                        </EditButton>
+                        <DeleteButton onClick={() => deleteContact(contact.id)}>
+                            <IoMdTrash size={25} />
+                            <span>Delete</span>
+                        </DeleteButton>
                     </ActionButtons>
                 </CardContainer>
             ))}
@@ -65,29 +81,52 @@ const CardContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    margin: 0.5rem 2rem;
-    background-color: #FFEAAE;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 
     &:hover {
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        transform: translateY(-2px);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        margin: 1rem;
     }
 `
 
 const ContactInfo = styled.div`
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+    }
 `
 
 const IconContainer = styled.div`
+    background: rgba(226, 158, 74, 0.2);
+    padding: 1rem;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: scale(1.1);
+        background: rgba(226, 158, 74, 0.3);
+    }
 `
 
 const ContactDetails = styled.div`
@@ -96,26 +135,74 @@ const ContactDetails = styled.div`
 `
 
 const Name = styled.h3`
-    margin: 0;
     font-size: 1.5rem;
-    color: #333;
+    color: #fff;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 `
 
 const Email = styled.p`
     margin: 0.2rem 0 0 0;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
-    color: #666;
 `
 
 const ActionButtons = styled.div`
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     align-items: center;
 
-    & > svg {
-        transition: transform 0.2s ease;
-        &:hover {
-            transform: scale(1.1);
+    @media (max-width: 640px) {
+        justify-content: center;
+    }
+`
+
+const ButtonBase = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    
+    span {
+        display: none;
+    }
+
+    &:hover {
+        transform: scale(1.05);
+        span {
+            display: inline;
         }
+    }
+
+    svg {
+        transition: transform 0.3s ease;
+    }
+
+    &:hover svg {
+        transform: scale(1.1);
+    }
+`
+
+const EditButton = styled(ButtonBase)`
+    background-color: rgba(74, 144, 226, 0.2);
+    color: #4A90E2;
+
+    &:hover {
+        background-color: rgba(74, 144, 226, 0.3);
+    }
+`
+
+const DeleteButton = styled(ButtonBase)`
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+
+    &:hover {
+        background-color: rgba(244, 67, 54, 0.3);
     }
 `
