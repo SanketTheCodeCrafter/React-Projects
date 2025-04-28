@@ -34,8 +34,32 @@ const PortfolioSection = () => {
             </Stack>
 
             <HStack marginLeft={"9rem"} spacing={4}>
-                <Button height={"38px"} bg={"#5F00D9"} color={"white"} leftIcon={<AiOutlineArrowDown/>}>Deposit</Button>
-                <Button height={"38px"} bg={"#5F00D9"} color={"white"} leftIcon={<AiOutlineArrowUp/>}>Withdraw</Button>
+                <Button 
+                    height={"38px"} 
+                    bg={"#5F00D9"} 
+                    color={"white"} 
+                    leftIcon={<AiOutlineArrowDown/>}
+                    _hover={{
+                        bg: "#4B00AF",
+                        transform: "translateY(-2px)",
+                        boxShadow: "lg"
+                    }}
+                >
+                    Deposit
+                </Button>
+                <Button 
+                    height={"38px"} 
+                    bg={"#5F00D9"} 
+                    color={"white"} 
+                    leftIcon={<AiOutlineArrowUp/>}
+                    _hover={{
+                        bg: "#4B00AF",
+                        transform: "translateY(-2px)",
+                        boxShadow: "lg"
+                    }}
+                >
+                    Withdraw
+                </Button>
             </HStack>
         </HStack>
     )

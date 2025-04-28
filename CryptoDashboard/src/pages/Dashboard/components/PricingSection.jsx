@@ -10,7 +10,11 @@ const PricingSection = () => {
     return (
         <>
             <Flex direction="column" alignItems="flex-end" w="100%">
-                <Flex spacing={4} p={4} borderRadius="lg" w="100%" bg="white" flexDirection="column">
+                <Flex spacing={4} p={4} borderRadius="lg" w="100%" bg="white" flexDirection="column" 
+                    boxShadow="sm" 
+                    transition="all 0.3s ease"
+                    _hover={{ boxShadow: "lg", transform: "translateY(-2px)" }}
+                >
                     <Stack>
                         <HStack>
                             <Text fontSize="sm" color="gray.600">Current Price</Text>
@@ -27,11 +31,31 @@ const PricingSection = () => {
                             </HStack>
                         </HStack>
                         <HStack marginLeft="21rem" marginTop={"-4rem"} spacing={4}>
-                            <Button height="38px" bg="#5F00D9" color="white" gap={2}>
+                            <Button 
+                                height="38px" 
+                                bg="#5F00D9" 
+                                color="white" 
+                                gap={2}
+                                _hover={{ 
+                                    bg: "#4A00A8",
+                                    transform: "scale(1.05)",
+                                    transition: "all 0.2s ease"
+                                }}
+                            >
                                 <Icon as={AiFillPlusCircle}></Icon>
                                 <Text>Buy</Text>
                             </Button>
-                            <Button height="38px" bg="#5F00D9" color="white" gap={2}>
+                            <Button 
+                                height="38px" 
+                                bg="#5F00D9" 
+                                color="white" 
+                                gap={2}
+                                _hover={{ 
+                                    bg: "#4A00A8",
+                                    transform: "scale(1.05)",
+                                    transition: "all 0.2s ease"
+                                }}
+                            >
                                 <Icon as={AiOutlineMinusCircle}></Icon>
                                 <Text>Sell</Text>
                             </Button>
@@ -44,6 +68,8 @@ const PricingSection = () => {
                                 {["1H", "1D", "1W", "1M"].map((tab)=>(
                                     <Tab
                                         _selected={{ color: "black", bg: "#dddadaec" }}
+                                        _hover={{ bg: "#e9e9e9" }}
+                                        transition="all 0.2s ease"
                                         key={tab}
                                         rounded={"xl"}
                                     >{tab}</Tab>
@@ -52,12 +78,19 @@ const PricingSection = () => {
                         </Tabs>
                     </Flex>
                     <img src="/graph.svg" alt="" />
-                         <HStack justify={"space-between"} mt={"1rem"}>
-                            {timestamps.map((timestamp, index)=>(
-                                <Text key={index} textColor={"gray.400"}>{timestamp}</Text>
-                            ))}
-                        </HStack>
-                 </Flex>
+                    <HStack justify={"space-between"} mt={"1rem"}>
+                        {timestamps.map((timestamp, index)=>(
+                            <Text 
+                                key={index} 
+                                textColor={"gray.400"}
+                                _hover={{
+                                    color: "gray.600",
+                                    transition: "all 0.2s ease"
+                                }}
+                            >{timestamp}</Text>
+                        ))}
+                    </HStack>
+                </Flex>
             </Flex>
         </>
     )

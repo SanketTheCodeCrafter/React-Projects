@@ -10,7 +10,7 @@ const DashboardLayout = ({ title, children }) => {
                 <SideNav />
                 <Box flexGrow={1}>
                     <TopNav title={title} />
-                    <Container maxW={"70rem"} bg={"#514f4d33"}>{children}</Container>
+                    <Container maxW={"80rem"} bg={"#514f4d33"}>{children}</Container>
                 </Box>
             </Flex>
         </div>
