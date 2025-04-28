@@ -5,7 +5,7 @@ import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai'
 
 const PortfolioSection = () => {
     return (
-        <HStack bg={"white"} p={6} my={6} spacing={16} rounded={"xl"} >
+        <HStack bg={"white"} p={6} my={4} spacing={16} rounded={"xl"} >
             <Stack>
                 <HStack>
                     <Text fontSize="sm" color="gray.600">Total Portfolio Value</Text>
