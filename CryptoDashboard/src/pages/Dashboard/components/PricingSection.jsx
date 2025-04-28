@@ -9,7 +9,7 @@ const PricingSection = () => {
 
     return (
         <>
-            <Flex direction="column" alignItems="flex-end" w="50%">
+            <Flex direction="column" alignItems="flex-end" w="100%">
                 <Flex spacing={4} p={4} borderRadius="lg" w="100%" bg="white" flexDirection="column">
                     <Stack>
                         <HStack>

@@ -10,13 +10,12 @@ import InfoCard from './components/InfoCard'
 
 const Dashboard = () => {
   return (
-    <DashboardLayout title={"Dashboard"}
-    >
-      <Grid>
-        <GridItem><PortfolioSection/></GridItem>
+    <DashboardLayout title={"Dashboard"}>
+      <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+        <GridItem colSpan={2}><PortfolioSection/></GridItem>
         <GridItem><PricingSection/></GridItem>
-        {/* <GridItem><Transactions/></GridItem>
-        <GridItem><InfoCard/></GridItem>
+        <GridItem><Transactions/></GridItem>
+        {/* <GridItem><InfoCard/></GridItem>
         <GridItem><InfoCard/></GridItem> */}
       </Grid>
     </DashboardLayout>
