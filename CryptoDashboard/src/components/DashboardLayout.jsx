@@ -2,6 +2,8 @@ import { Box, Container, Flex } from '@chakra-ui/react'
 import React from 'react'
 import SideNav from './SideNav'
 import TopNav from './TopNav'
+import Dashboard from '../pages/Dashboard/Dashboard'
+import Transaction from '../pages/Transaction/Transaction'
 
 const DashboardLayout = ({ title, children }) => {
     return (
@@ -10,7 +12,10 @@ const DashboardLayout = ({ title, children }) => {
                 <SideNav />
                 <Box flexGrow={1}>
                     <TopNav title={title} />
-                    <Container maxW={"80rem"} bg={"#514f4d33"}>{children}</Container>
+                    <Container maxW={"80rem"} bg={"#514f4d33"}>
+                        {children}
+                        
+                    </Container>
                 </Box>
             </Flex>
         </div>
