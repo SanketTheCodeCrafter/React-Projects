@@ -31,7 +31,7 @@ const Transaction = () => {
     <>
       <DashboardLayout title={"Transactions"}>
         <Flex justify={"end"} mt={2} mb={4}>
-          <Button leftIcon={<Icon as={AiOutlineDownload} />} bg={"#5F00D9"} color={"white"}>Export CSV</Button>
+          <Button mt={5} leftIcon={<Icon as={AiOutlineDownload} />} bg={"#5F00D9"} color={"white"}>Export CSV</Button>
         </Flex>
 
         <Card borderRadius={"md"}>
