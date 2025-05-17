@@ -5,42 +5,45 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const Signin = () => {
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state)=> state.user)
+  const { loading, error } = useSelector((state) => state.user);
+  const [hasAttempted, setHasAttempted] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
-    console.log(formData);
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setHasAttempted(true);
 
     try {
-      dispatch(signInStart())
+      dispatch(signInStart());
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
-      })
+      });
       const data = await res.json();
-      console.log(data);
       
-      if (data.success == false) {
-        setError(true);
+      if (!res.ok) {
+        dispatch(signInFailure(data.message || 'Invalid credentials'));
         return;
       }
-      navigate('/')
+
+      if (data && data.success === false) {
+        dispatch(signInFailure(data.message || 'Sign in failed'));
+        return;
+      }
+
       dispatch(signInSuccess(data));
+      navigate('/');
     } catch (error) {
-      dispatch(signInFailure(error))
-      console.log(error);
+      dispatch(signInFailure('Something went wrong. Please try again.'));
     }
-
-
   }
 
   return (
@@ -57,7 +60,7 @@ const Signin = () => {
           <span className='text-blue-500'>Signup</span>
         </Link>
       </div>
-      <p className='text-red-500 mt-4'>{error ? error : 'Something went wrong'}</p>
+      {hasAttempted && error && <p className='text-red-500 mt-4'>{error}</p>}
     </div>
   )
 }
