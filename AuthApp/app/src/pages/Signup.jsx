@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import OAuth from '../components/OAuth';
 
 const Signup = () => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false)
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
-    console.log(formData);
   }
 
   const handleSubmit = async (e) => {
@@ -23,24 +23,38 @@ const Signup = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
-      })
-      const data = await res.json();
-      console.log(data);
+      });
+
+      let data = null;
+      const text = await res.text();
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch (jsonError) {
+          setError('Server returned invalid response.');
+          setLoading(false);
+          return;
+        }
+      }
+
       setLoading(false);
       setError(false);
 
-      if(data.success==false){
-        setError(true);
+      if (!res.ok) {
+        setError((data && data.message) || 'Internal Server Error');
         return;
       }
-      navigate('/signin')
+
+      if (data && data.success === false) {
+        setError(data.message || 'Signup failed');
+        return;
+      }
+
+      navigate('/signin');
     } catch (error) {
       setLoading(false);
-      setError(true)
-      console.log(error);
+      setError('Something went wrong. Please try again.');
     }
-
-
   }
 
   return (
@@ -50,15 +64,16 @@ const Signup = () => {
         <input type="text" id='username' placeholder='username' className='bg-slate-100 p-3 rounded-lg' onChange={handleChange} />
         <input type="email" id='email' placeholder='email' className='bg-slate-100 p-3 rounded-lg' onChange={handleChange} />
         <input type="password" id='password' placeholder='password' className='bg-slate-100 p-3 rounded-lg' onChange={handleChange} />
-        <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-85'>{loading? 'LOADING':'SIGNUP'}</button>
+        <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-85'>{loading ? 'LOADING' : 'SIGNUP'}</button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-2">
-        <p>Have an account?</p>
+        <p>Already have an account?</p>
         <Link to={"/signin"}>
           <span className='text-blue-500'>Signin</span>
         </Link>
       </div>
-      <p className='text-red-500 mt-4'>{error && 'Something went wrong'}</p>
+      {error && <p className='text-red-500 mt-4'>{error}</p>}
     </div>
   )
 }
