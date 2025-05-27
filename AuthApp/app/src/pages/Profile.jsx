@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
-import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice.js';
+import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure } from '../redux/user/userSlice.js';
 
 const Profile = () => {
     const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -45,6 +45,32 @@ const Profile = () => {
         }
     }
 
+    const handleDeleteAccount = async ()=>{
+        try {
+            dispach(deleteUserStart());
+            const res= await fetch(`/api/user/delete/${currentUser._id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            const data = await res.json();
+            if(data.success === false){
+                dispach(deleteUserFailure(data));
+                console.error("Error deleting account:", data.message);
+                return;
+            }
+            dispach(deleteUserSuccess());
+            console.log("Account deleted successfully:", data);
+            setUpdateSuccess(false);
+            // Optionally, redirect to login or home page after deletion
+            navigate('/signup');
+
+        } catch (error) {
+            dispach(deleteUserFailure(error));
+        }
+    }
+
     return (
         <div className='p-3 max-w-lg mx-auto'>
             <h1 className='text-center font-semibold text-3xl my-7'>Profile</h1>
@@ -58,7 +84,7 @@ const Profile = () => {
                 <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading ? 'Loading...' : "Update"}</button>
             </form>
             <div className="flex justify-between mt-5">
-                <button className='text-red-700 cursorpointer'>
+                <button onClick={handleDeleteAccount} className='text-red-700 cursorpointer'>
                     Delete
                 </button>
                 <button className='text-red-700 cursorpointer'>
