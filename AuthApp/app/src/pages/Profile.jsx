@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
-import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure } from '../redux/user/userSlice.js';
+import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure, signOut } from '../redux/user/userSlice.js';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
     const { currentUser, loading, error } = useSelector((state) => state.user);
     const [formData, setFormData] = useState(null);
     const dispach = useDispatch();
+    const navigate = useNavigate();
     const [updateSuccess, setUpdateSuccess] = useState(false);
 
 
@@ -71,6 +73,17 @@ const Profile = () => {
         }
     }
 
+    const handleSignOut = async ()=>{
+        try {
+            await fetch('/api/auth/signout')
+            dispach(signOut());
+            navigate('/signin');
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
     return (
         <div className='p-3 max-w-lg mx-auto'>
             <h1 className='text-center font-semibold text-3xl my-7'>Profile</h1>
@@ -87,7 +100,7 @@ const Profile = () => {
                 <button onClick={handleDeleteAccount} className='text-red-700 cursorpointer'>
                     Delete
                 </button>
-                <button className='text-red-700 cursorpointer'>
+                <button onClick={handleSignOut} className='text-red-700 cursorpointer'>
                     Sign out
                 </button>
             </div>
